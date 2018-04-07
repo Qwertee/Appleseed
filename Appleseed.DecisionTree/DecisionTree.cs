@@ -22,9 +22,30 @@ namespace Appleseed.DecisionTree
         /// </summary>
         private Dictionary<string, HashSet<object>> attributeValues;
 
-
-        public void Classify(Example example)
+        /// <summary>
+        /// classifies an arbitrary example using a build tree.
+        /// 
+        /// THE TREE MUST BE BUILD BEFORE CALLING THIS METHOD!
+        /// </summary>
+        public string Classify(Example example)
         {
+            TreeNode currentNode = root;
+
+            // while we aren't at a leaf node in the tree...
+            while (!currentNode.terminal)
+            {
+                // look through the list of possible values that current node's
+                // splitting attribute can take on.
+                foreach (var child in currentNode.children)
+                {
+                    if (child.value.Equals(example.attributes[currentNode.attribute]))
+                    {
+                        currentNode = child;
+                    }
+                }
+            }
+
+            return currentNode.classification;
 
         }
 
@@ -67,7 +88,7 @@ namespace Appleseed.DecisionTree
             // Check if there are no more examples to be classified
             if (examples.Count == 0)
             {
-                return new TreeNode(MajorityClassify(parentExamples), null, true);
+                return new TreeNode(MajorityClassify(parentExamples), null, parentNode.value, true);
             }
 
             // check if all the remaining examples have the same classification
@@ -83,13 +104,13 @@ namespace Appleseed.DecisionTree
             }
             if (allHaveSameClassification)
             {
-                return new TreeNode(classification, null, true);
+                return new TreeNode(classification, null, parentNode.value, true);
             }
 
             // check if there are no more attributes to split on
             if (currentAttrs.Count == 0)
             {
-                return new TreeNode(MajorityClassify(examples), null, true);
+                return new TreeNode(MajorityClassify(examples), null, parentNode.value, true);
             }
 
             // find the attribute that results in the highest 
@@ -106,8 +127,14 @@ namespace Appleseed.DecisionTree
                 }
             }
 
+            object pAV = null;
+            if (parentNode != null)
+            {
+                pAV = parentNode.value;
+            }
+
             // create the tree that splits on the best found attribute
-            TreeNode tree = new TreeNode(null, highestAttr, false);
+            TreeNode tree = new TreeNode(null, highestAttr, pAV, false);
 
             // for each possible value that the highest attribute can take on...
             foreach (var value in attributeValues[highestAttr])
@@ -128,7 +155,7 @@ namespace Appleseed.DecisionTree
                 List<string> newAttrs = new List<string>(currentAttrs);
                 newAttrs.Remove(highestAttr);
 
-                TreeNode childTree = new TreeNode(null, highestAttr, false);
+                TreeNode childTree = new TreeNode(null, highestAttr, value, false);
                 tree.AddChild(Learn(exs, newAttrs, MajorityClassify(exs), examples, childTree));
             }
             return tree;
@@ -136,7 +163,18 @@ namespace Appleseed.DecisionTree
 
         private Dictionary<string, int> CountLabelOccurrences(List<Example> examples)
         {
-            throw new NotImplementedException();
+            Dictionary<string, int> occurrences = new Dictionary<string, int>();
+            foreach (var example in examples)
+            {
+                if (occurrences.ContainsKey(example.classification)) {
+                    occurrences[example.classification]++;
+                } else
+                {
+                    occurrences.Add(example.classification, 1);
+                }
+            }
+
+            return occurrences;
         }
 
         private double InfoGain(List<Example> examples, string attr)

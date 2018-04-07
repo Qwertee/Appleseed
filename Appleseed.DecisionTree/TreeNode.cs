@@ -12,29 +12,35 @@ namespace Appleseed.DecisionTree
         /// The classification of the node if it is terminal.
         /// The majority classification of the children if it isn't
         /// </summary>
-        string classification;
+        public string classification;
 
         /// <summary>
         /// The attribute that this node splits on
         /// </summary>
-        string attribute;
+        public string attribute;
+
+        /// <summary>
+        /// value that lead to this node
+        /// </summary>
+        public object value;
 
         /// <summary>
         /// A list of children of this node
         /// </summary>
-        List<TreeNode> children;
+        public List<TreeNode> children;
 
         /// <summary>
         /// Whether the current node terminal.
         /// A terminal node has no children.
         /// </summary>
-        bool terminal;
+        public bool terminal;
 
-        public TreeNode(string classification, string attribute, bool terminal)
+        public TreeNode(string classification, string attribute, object value, bool terminal)
         {
             this.classification = classification;
             this.attribute = attribute;
             this.terminal = terminal;
+            this.value = value;
 
             // if the node is a terminal one, dont need children
             if (terminal)
