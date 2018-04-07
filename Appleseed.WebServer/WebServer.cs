@@ -55,6 +55,8 @@ namespace Appleseed.WebServer
             test.AddAttribute("airport", "MSP");
 
             Console.WriteLine("Delayed? " + Tree.Classify(test));
+
+            Console.ReadKey();
         }
 
         private static DecisionTree.DecisionTree CreateTree(string connStr, int limit)

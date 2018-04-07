@@ -41,6 +41,7 @@ namespace Appleseed.DecisionTree
                     if (child.value.Equals(example.attributes[currentNode.attribute]))
                     {
                         currentNode = child;
+                        break;
                     }
                 }
             }
