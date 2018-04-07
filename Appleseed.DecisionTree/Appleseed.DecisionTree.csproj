@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClassifyOutput.cs" />
     <Compile Include="DecisionTree.cs" />
     <Compile Include="Example.cs" />
     <Compile Include="Program.cs" />

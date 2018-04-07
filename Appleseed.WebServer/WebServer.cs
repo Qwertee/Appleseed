@@ -41,8 +41,25 @@ namespace Appleseed.WebServer
             
             
             Console.Write("Password: ");
-            String password = Console.ReadLine();
-            
+            string password = "";
+
+            ConsoleKeyInfo key;
+            do
+            {
+                key = Console.ReadKey(true);
+
+                // Ignore any key out of range.
+                if (((int)key.Key) >= 65 && ((int)key.Key <= 90))
+                {
+                    // Append the character to the password.
+                    // password.AppendChar(key.KeyChar);
+                    password = password + key.KeyChar;
+                    Console.Write("*");
+                }
+                // Exit if Enter key is pressed.
+            } while (key.Key != ConsoleKey.Enter);
+            Console.WriteLine();
+
             Console.Write("Limit Dataset (-1 for no limit): ");
             int limit = int.Parse(Console.ReadLine() ?? "100");
             
@@ -50,7 +67,7 @@ namespace Appleseed.WebServer
             var connStr = "Server=appleseed.keenant.com" +
                           ";Database=appleseed" +
                           ";User ID=johnny" +
-                          ";Password=" + password + 
+                          ";Password=" + password.ToString() + 
                           ";SslMode=none";
 
             Tree = CreateTree(connStr, limit);
@@ -62,7 +79,10 @@ namespace Appleseed.WebServer
             test1.AddAttribute(Attrs.DayOfWeek, 6);
             test1.AddAttribute(Attrs.Airline, "AA");
             test1.AddAttribute(Attrs.Airport, "MSP");
-            Console.WriteLine("Delayed? " + Tree.Classify(test1));
+
+            ClassifyOutput result = Tree.Classify(test1);
+            Console.WriteLine("Delayed? " + result);
+            Console.WriteLine("Randomized ratio: " + result.randomnessRatio);
 
             Console.ReadKey();
         }

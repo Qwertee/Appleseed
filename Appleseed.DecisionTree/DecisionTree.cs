@@ -22,13 +22,18 @@ namespace Appleseed.DecisionTree
         /// 
         /// THE TREE MUST BE BUILD BEFORE CALLING THIS METHOD!
         /// </summary>
-        public string Classify(Example example)
+        public ClassifyOutput Classify(Example example)
         {
             TreeNode currentNode = root;
+
+            double counts = 0;
+            double randomizedCounts = 0;
 
             // while we aren't at a leaf node in the tree...
             while (!currentNode.terminal)
             {
+                counts++;
+
                 // look through the list of possible values that current node's
                 // splitting attribute can take on.
                 bool foundChild = false;
@@ -45,13 +50,15 @@ namespace Appleseed.DecisionTree
                 
                 if (!foundChild)
                 {
+                    randomizedCounts++;
                     Console.WriteLine("Choosing random path...");
                     Random r = new Random();
                     currentNode = currentNode.children[r.Next(currentNode.children.Count)];
                 }
             }
-
-            return currentNode.classification;
+            ClassifyOutput output;
+            return output = new ClassifyOutput(currentNode.classification, randomizedCounts / counts);
+            // return currentNode.classification;
 
         }
 
