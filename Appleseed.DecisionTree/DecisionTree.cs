@@ -22,9 +22,9 @@ namespace Appleseed.DecisionTree
         private Dictionary<int, HashSet<object>> attributeValues;
 
         /// <summary>
-        /// classifies an arbitrary example using a build tree.
+        /// classifies an arbitrary example using a built tree.
         /// 
-        /// THE TREE MUST BE BUILD BEFORE CALLING THIS METHOD!
+        /// THE TREE MUST BE BUILT BEFORE CALLING THIS METHOD!
         /// </summary>
         public ClassifyOutput Classify(Example example)
         {
@@ -96,6 +96,8 @@ namespace Appleseed.DecisionTree
             }
 
             root = Learn(trainingSet, attributes, "", null, null);
+
+            Test(trainingSet);
         }
         // private DecTreeNode DecisionTreeLearning(List<Instance> examples, List<String> currentAttrs, String defaultClassifier, List<Instance> parentExamples, DecTreeNode parentNode) {
 
@@ -355,5 +357,24 @@ namespace Appleseed.DecisionTree
             stream.Close();
             return tree;
         } 
+
+        public void Test(List<Example> examples)
+        {
+            double count = 0;
+            double correct = 0;
+            foreach (var ex in examples)
+            {
+                count++;
+
+
+                // if the current example's given classification is equal to the "guess"
+                if (Classify(ex).classification.Equals(ex.classification))
+                {
+                    correct++;
+                } 
+            }
+
+            Console.WriteLine("Correct: " + (correct / count) * 100 + "%");
+        }
     }
 }
