@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using Appleseed.DecisionTree;
 using MySql.Data.MySqlClient;
@@ -38,40 +41,59 @@ namespace Appleseed.WebServer
                     host.Start();
                 }
             }).Start();
-            
-            
-            Console.Write("Password: ");
-            string password = "";
 
-            ConsoleKeyInfo key;
-            do
+
+            Console.WriteLine("Enter path of existing tree (empty if doesnt exist)");
+            string serializedPath = Console.ReadLine();
+
+            if (!serializedPath.Equals(""))
             {
-                key = Console.ReadKey(true);
+                Tree = DecisionTree.DecisionTree.deserialize(serializedPath);
+            } else
+            {
+                Console.Write("Password: ");
+                string password = "";
 
-                // Ignore any key out of range.
-                if (((int)key.Key) >= 65 && ((int)key.Key <= 90))
+                ConsoleKeyInfo key;
+                do
                 {
-                    // Append the character to the password.
-                    // password.AppendChar(key.KeyChar);
-                    password = password + key.KeyChar;
-                    Console.Write("*");
+                    key = Console.ReadKey(true);
+
+                    // Ignore any key out of range.
+                    if (((int)key.Key) >= 65 && ((int)key.Key <= 90))
+                    {
+                        // Append the character to the password.
+                        // password.AppendChar(key.KeyChar);
+                        password = password + key.KeyChar;
+                        Console.Write("*");
+                    }
+                    // Exit if Enter key is pressed.
+                } while (key.Key != ConsoleKey.Enter);
+                Console.WriteLine();
+
+
+
+                Console.Write("Limit Dataset (-1 for no limit): ");
+                int limit = int.Parse(Console.ReadLine() ?? "100");
+
+                // sql connection string for db
+                var connStr = "Server=appleseed.keenant.com" +
+                              ";Database=appleseed" +
+                              ";User ID=johnny" +
+                              ";Password=" + password.ToString() +
+                              ";SslMode=none";
+
+                Tree = CreateTree(connStr, limit);
+
+                Console.WriteLine("Enter path to save serialized file (empty to not save)\n" +
+                    "NOTE: file extensions are not necessary");
+
+                string serializePath = Console.ReadLine();
+                if (!serializedPath.Equals(""))
+                {
+                    Tree.serialize(serializedPath);
                 }
-                // Exit if Enter key is pressed.
-            } while (key.Key != ConsoleKey.Enter);
-            Console.WriteLine();
-
-            Console.Write("Limit Dataset (-1 for no limit): ");
-            int limit = int.Parse(Console.ReadLine() ?? "100");
-            
-            // sql connection string for db
-            var connStr = "Server=appleseed.keenant.com" +
-                          ";Database=appleseed" +
-                          ";User ID=johnny" +
-                          ";Password=" + password.ToString() + 
-                          ";SslMode=none";
-
-            Tree = CreateTree(connStr, limit);
-
+            }
 
             var test1 = new Example("");
             test1.AddAttribute(Attrs.Month, 1);

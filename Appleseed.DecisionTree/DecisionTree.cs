@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Appleseed.DecisionTree
 {
+    [Serializable]
     public class DecisionTree
     {
         private TreeNode root;
@@ -325,5 +329,31 @@ namespace Appleseed.DecisionTree
             }
             return majorityString;
         }
+
+        public void serialize(string path)
+        {
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(
+                path + ".bin",
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.None);
+
+            formatter.Serialize(stream, this);
+            stream.Close();
+        }
+
+        public static DecisionTree deserialize(string path)
+        {
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(
+                path,
+                FileMode.Open,
+                FileAccess.Read);
+
+            DecisionTree tree = (DecisionTree)formatter.Deserialize(stream);
+            stream.Close();
+            return tree;
+        } 
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Appleseed.DecisionTree
 {
+    [Serializable]
     class TreeNode
     {
         /// <summary>
