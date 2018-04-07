@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Appleseed.DecisionTree
 {
     public class DecisionTree
     {
-        List<string> Attributes { get; set; }
-
         private TreeNode root;
 
         /// <summary>
         /// List of all attributes
         /// </summary>
-        private List<string> attributes;
+        private List<int> attributes;
 
         /// <summary>
         /// dictionary that maps attribute names to a list of values that it can contain
         /// </summary>
-        private Dictionary<string, HashSet<object>> attributeValues;
+        private Dictionary<int, HashSet<object>> attributeValues;
 
         /// <summary>
         /// classifies an arbitrary example using a build tree.
@@ -36,13 +31,23 @@ namespace Appleseed.DecisionTree
             {
                 // look through the list of possible values that current node's
                 // splitting attribute can take on.
+                bool foundChild = false;
+                
                 foreach (var child in currentNode.children)
                 {
                     if (child.value.Equals(example.attributes[currentNode.attribute]))
                     {
+                        foundChild = true;
                         currentNode = child;
                         break;
                     }
+                }
+                
+                if (!foundChild)
+                {
+                    Console.WriteLine("Choosing random path...");
+                    Random r = new Random();
+                    currentNode = currentNode.children[r.Next(currentNode.children.Count)];
                 }
             }
 
@@ -52,8 +57,8 @@ namespace Appleseed.DecisionTree
 
         public void BuildTree(List<Example> trainingSet)
         {
-            attributes = new List<string>();
-            attributeValues = new Dictionary<string, HashSet<object>>();
+            attributes = new List<int>();
+            attributeValues = new Dictionary<int, HashSet<object>>();
 
 
             // for each example in the training set...
@@ -83,13 +88,13 @@ namespace Appleseed.DecisionTree
         }
         // private DecTreeNode DecisionTreeLearning(List<Instance> examples, List<String> currentAttrs, String defaultClassifier, List<Instance> parentExamples, DecTreeNode parentNode) {
 
-        private TreeNode Learn(List<Example> examples, List<String> currentAttrs, string defaultClassification, List<Example> parentExamples, TreeNode parentNode)
+        private TreeNode Learn(List<Example> examples, List<int> currentAttrs, string defaultClassification, List<Example> parentExamples, TreeNode parentNode)
         {
 
             // Check if there are no more examples to be classified
             if (examples.Count == 0)
             {
-                return new TreeNode(MajorityClassify(parentExamples), null, parentNode.value, true);
+                return new TreeNode(MajorityClassify(parentExamples), -1, parentNode.value, true);
             }
 
             // check if all the remaining examples have the same classification
@@ -105,20 +110,20 @@ namespace Appleseed.DecisionTree
             }
             if (allHaveSameClassification)
             {
-                return new TreeNode(classification, null, parentNode.value, true);
+                return new TreeNode(classification, -1, parentNode.value, true);
             }
 
             // check if there are no more attributes to split on
             if (currentAttrs.Count == 0)
             {
-                return new TreeNode(MajorityClassify(examples), null, parentNode.value, true);
+                return new TreeNode(MajorityClassify(examples), -1, parentNode.value, true);
             }
 
             // find the attribute that results in the highest 
             // information gain for the current node
             double highestInfoGain = Double.NegativeInfinity; // initialized to really low number
-            string highestAttr = null;
-            foreach(string attr in currentAttrs)
+            int highestAttr = -1;
+            foreach(int attr in currentAttrs)
             {
                 double gain = InfoGain(examples, attr);
                 if (gain > highestInfoGain)
@@ -153,7 +158,7 @@ namespace Appleseed.DecisionTree
                     }
                 }
 
-                List<string> newAttrs = new List<string>(currentAttrs);
+                List<int> newAttrs = new List<int>(currentAttrs);
                 newAttrs.Remove(highestAttr);
 
                 TreeNode childTree = new TreeNode(null, highestAttr, value, false);
@@ -178,7 +183,7 @@ namespace Appleseed.DecisionTree
             return occurrences;
         }
 
-        private double InfoGain(List<Example> examples, string attr)
+        private double InfoGain(List<Example> examples, int attr)
         {
             return Entropy(examples) - ConditionalEntropy(examples, attr);
         }
@@ -200,7 +205,7 @@ namespace Appleseed.DecisionTree
             return entropy;
         }
 
-        private double ConditionalEntropy(List<Example> examples, string attr)
+        private double ConditionalEntropy(List<Example> examples, int attr)
         {
             HashSet<object> attrValues = new HashSet<object>(attributeValues[attr]);
 
@@ -263,7 +268,7 @@ namespace Appleseed.DecisionTree
             return condH;
         }
 
-        private Dictionary<string, int> CountClassificationOccurrencesGivenAttr(List<Example> examples, string attr, object value)
+        private Dictionary<string, int> CountClassificationOccurrencesGivenAttr(List<Example> examples, int attr, object value)
         {
             Dictionary<string, int> occurrences = new Dictionary<string, int>();
             foreach (Example ex in examples)

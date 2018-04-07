@@ -14,15 +14,15 @@ namespace Appleseed.DecisionTree
         /// Dictionary that maps attribute names to the values that
         /// they con    tain for the current example
         /// </summary>
-        public Dictionary<string, object> attributes { get; }
+        public Dictionary<int, object> attributes { get; }
 
         public Example(string classification)
         {
             this.classification = classification;
-            attributes = new Dictionary<string, object>();
+            attributes = new Dictionary<int, object>();
         }
 
-        public void AddAttribute(string name, object value)
+        public void AddAttribute(int name, object value)
         {
             System.Diagnostics.Debug.WriteLineIf(attributes.ContainsKey(name), 
                 "Warning: changing existing attribute");

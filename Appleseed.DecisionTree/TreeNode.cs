@@ -17,7 +17,7 @@ namespace Appleseed.DecisionTree
         /// <summary>
         /// The attribute that this node splits on
         /// </summary>
-        public string attribute;
+        public int attribute;
 
         /// <summary>
         /// value that lead to this node
@@ -35,7 +35,7 @@ namespace Appleseed.DecisionTree
         /// </summary>
         public bool terminal;
 
-        public TreeNode(string classification, string attribute, object value, bool terminal)
+        public TreeNode(string classification, int attribute, object value, bool terminal)
         {
             this.classification = classification;
             this.attribute = attribute;

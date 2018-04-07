@@ -58,9 +58,9 @@ namespace Appleseed.WebServer
 
             var test1 = new Example("");
             test1.AddAttribute(Attrs.Month, 1);
-            test1.AddAttribute(Attrs.Day, 1);
-            test1.AddAttribute(Attrs.DayOfWeek, 4);
-            test1.AddAttribute(Attrs.Airline, "NK");
+            test1.AddAttribute(Attrs.Day, 3);
+            test1.AddAttribute(Attrs.DayOfWeek, 6);
+            test1.AddAttribute(Attrs.Airline, "AA");
             test1.AddAttribute(Attrs.Airport, "MSP");
             Console.WriteLine("Delayed? " + Tree.Classify(test1));
 
