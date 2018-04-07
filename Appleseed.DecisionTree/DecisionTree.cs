@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Appleseed.DecisionTree
 {
-    class DecisionTree
+    public class DecisionTree
     {
         List<string> Attributes { get; set; }
 

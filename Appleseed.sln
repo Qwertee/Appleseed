@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appleseed.DecisionTree", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appleseed.WebServer", "Appleseed.WebServer\Appleseed.WebServer.csproj", "{DF786279-7681-4818-AAAF-DDC4251824EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Appleseed.Data", "Appleseed.Data\Appleseed.Data.csproj", "{698DAA8A-6449-4484-B894-03904956DD11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{DF786279-7681-4818-AAAF-DDC4251824EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF786279-7681-4818-AAAF-DDC4251824EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF786279-7681-4818-AAAF-DDC4251824EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{698DAA8A-6449-4484-B894-03904956DD11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{698DAA8A-6449-4484-B894-03904956DD11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{698DAA8A-6449-4484-B894-03904956DD11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{698DAA8A-6449-4484-B894-03904956DD11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
