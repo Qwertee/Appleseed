@@ -10,6 +10,7 @@ namespace Appleseed.DecisionTree
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("test");
         }
     }
 }
