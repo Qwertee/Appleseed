@@ -27,26 +27,10 @@ namespace Appleseed.WebServer
         
         public static void Main(string[] args)
         {
-            // web server host config
-            HostConfiguration hostConfig = new HostConfiguration();
-            hostConfig.UrlReservations.CreateAutomatically = true;
-            var hostAndPort = args.ElementAtOrDefault(0) ?? "localhost:1234";
-            Uri uri = new Uri("http://" + hostAndPort);
-            
-            Console.WriteLine("Running on http://localhost:1234");
-            new Thread(() => { 
-                // start host
-                using (var host = new NancyHost(hostConfig, uri))
-                {
-                    host.Start();
-                }
-            }).Start();
-
-
             Console.WriteLine("Enter path of existing tree (empty if doesnt exist)");
             string serializedPath = Console.ReadLine();
 
-            if (!serializedPath.Equals(""))
+            if (serializedPath != null && !serializedPath.Equals(""))
             {
                 Tree = DecisionTree.DecisionTree.deserialize(serializedPath);
             } else
@@ -80,7 +64,7 @@ namespace Appleseed.WebServer
                 var connStr = "Server=appleseed.keenant.com" +
                               ";Database=appleseed" +
                               ";User ID=johnny" +
-                              ";Password=" + password.ToString() +
+                              ";Password=" + password +
                               ";SslMode=none";
 
                 Tree = CreateTree(connStr, limit);
@@ -88,25 +72,27 @@ namespace Appleseed.WebServer
                 Console.WriteLine("Enter path to save serialized file (empty to not save)\n" +
                     "NOTE: file extensions are not necessary");
 
-                string serializePath = Console.ReadLine();
-                if (!serializedPath.Equals(""))
+                serializedPath = Console.ReadLine();
+                if (serializedPath != null && !serializedPath.Equals(""))
                 {
                     Tree.serialize(serializedPath);
                 }
             }
-
-            var test1 = new Example("");
-            test1.AddAttribute(Attrs.Month, 1);
-            test1.AddAttribute(Attrs.Day, 3);
-            test1.AddAttribute(Attrs.DayOfWeek, 6);
-            test1.AddAttribute(Attrs.Airline, "AA");
-            test1.AddAttribute(Attrs.Airport, "MSP");
-
-            ClassifyOutput result = Tree.Classify(test1);
-            Console.WriteLine("Delayed? " + result);
-            Console.WriteLine("Randomized ratio: " + result.randomnessRatio);
-
-            Console.ReadKey();
+            
+            // web server host config
+            HostConfiguration hostConfig = new HostConfiguration();
+            hostConfig.UrlReservations.CreateAutomatically = true;
+            var hostAndPort = args.ElementAtOrDefault(0) ?? "localhost:1234";
+            Uri uri = new Uri("http://" + hostAndPort);
+            
+            // start host
+            using (var host = new NancyHost(hostConfig, uri))
+            {
+                host.Start();
+                Console.WriteLine("Running on http://localhost:1234");
+                Console.ReadLine();
+            }
+            
         }
 
         private static DecisionTree.DecisionTree CreateTree(string connStr, int limit)
