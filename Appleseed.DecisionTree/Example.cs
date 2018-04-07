@@ -12,7 +12,7 @@ namespace Appleseed.DecisionTree
 
         /// <summary>
         /// Dictionary that maps attribute names to the values that
-        /// they contain for the current example
+        /// they con    tain for the current example
         /// </summary>
         public Dictionary<string, object> attributes { get; }
 
@@ -22,7 +22,7 @@ namespace Appleseed.DecisionTree
             attributes = new Dictionary<string, object>();
         }
 
-        void AddAttribute(string name, object value)
+        public void AddAttribute(string name, object value)
         {
             System.Diagnostics.Debug.WriteLineIf(attributes.ContainsKey(name), 
                 "Warning: changing existing attribute");

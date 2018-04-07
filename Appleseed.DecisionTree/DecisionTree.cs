@@ -66,7 +66,7 @@ namespace Appleseed.DecisionTree
                     if (!attributes.Contains(attr.Key))
                     {
                         attributes.Add(attr.Key);
-                        attributeValues.Add(attr.Key, new HashSet<object>());
+                        attributeValues[attr.Key] = new HashSet<object>();
                     }
 
                     // if the tree's list of values doesn't contain the
@@ -170,7 +170,7 @@ namespace Appleseed.DecisionTree
                     occurrences[example.classification]++;
                 } else
                 {
-                    occurrences.Add(example.classification, 1);
+                    occurrences[example.classification] = 1;
                 }
             }
 
@@ -208,7 +208,7 @@ namespace Appleseed.DecisionTree
 
             Dictionary<object, double> specificCondEntropy = new Dictionary<object, double>();
 
-            foreach(string value in attrValues)
+            foreach(object value in attrValues)
             {
                 valuesCount[value] = 0;
                 specificCondEntropy[value] = 0.0;
@@ -229,7 +229,7 @@ namespace Appleseed.DecisionTree
                 classificationCount += i;
             }
 
-            foreach (string value in attrValues)
+            foreach (object value in attrValues)
             {
                 Dictionary<string, int> classificationOccurrences = CountClassificationOccurrencesGivenAttr(examples, attr, value);
                 int totalClassificationCountForVal = 0;
@@ -276,7 +276,7 @@ namespace Appleseed.DecisionTree
                         occurrences[ex.classification] = occurrences[ex.classification] + 1;
                     } else
                     {
-                        occurrences.Add(ex.classification, 1);
+                        occurrences[ex.classification] = 1;
                     }
                 }
             }
@@ -292,10 +292,10 @@ namespace Appleseed.DecisionTree
                 if (map.ContainsKey(ex.classification))
                 {
                     // if already in the map, increment the count
-                    map.Add(ex.classification, map[ex.classification] + 1);
+                    map[ex.classification] = map[ex.classification] + 1;
                 } else
                 {
-                    map.Add(ex.classification, 1);
+                    map[ex.classification] = 1;
                 }
             }
 
