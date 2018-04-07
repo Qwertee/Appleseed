@@ -9,6 +9,15 @@ using Nancy.Hosting.Self;
 
 namespace Appleseed.WebServer
 {
+    class Attrs
+    {
+        public static int Month = 0;
+        public static int Day = 1;
+        public static int DayOfWeek = 2;
+        public static int Airline = 3;
+        public static int Airport = 4;
+    }
+    
     class WebServer
     {
         public static DecisionTree.DecisionTree Tree;
@@ -47,14 +56,13 @@ namespace Appleseed.WebServer
             Tree = CreateTree(connStr, limit);
 
 
-            var test = new Example("");
-            test.AddAttribute("month", 1);
-            test.AddAttribute("day", 1);
-            test.AddAttribute("dayOfWeek", 4);
-            test.AddAttribute("airline", "NK");
-            test.AddAttribute("airport", "MSP");
-
-            Console.WriteLine("Delayed? " + Tree.Classify(test));
+            var test1 = new Example("");
+            test1.AddAttribute(Attrs.Month, 1);
+            test1.AddAttribute(Attrs.Day, 1);
+            test1.AddAttribute(Attrs.DayOfWeek, 4);
+            test1.AddAttribute(Attrs.Airline, "NK");
+            test1.AddAttribute(Attrs.Airport, "MSP");
+            Console.WriteLine("Delayed? " + Tree.Classify(test1));
 
             Console.ReadKey();
         }
@@ -106,11 +114,11 @@ namespace Appleseed.WebServer
                     var airport = reader.GetString("ORIGIN_AIRPORT");
                     
                     // add attributes
-                    example.AddAttribute("month", month);
-                    example.AddAttribute("day", day);
-                    example.AddAttribute("dayOfWeek", dayOfWeek);
-                    example.AddAttribute("airline", airline);
-                    example.AddAttribute("airport", airport);
+                    example.AddAttribute(Attrs.Month, month);
+                    example.AddAttribute(Attrs.Day, day);
+                    example.AddAttribute(Attrs.DayOfWeek, dayOfWeek);
+                    example.AddAttribute(Attrs.Airline, airline);
+                    example.AddAttribute(Attrs.Airport, airport);
 
                     trainingSet.Add(example);
                 }
