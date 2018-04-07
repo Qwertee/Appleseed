@@ -6,7 +6,7 @@ namespace Appleseed.WebServer
     {
         public MainModule()
         {
-            Get("/", _ => "Testing");
+            Get("/", test => "Test");
         }
     }
 }
