@@ -36,13 +36,21 @@ namespace Appleseed.DecisionTree
             {
                 // look through the list of possible values that current node's
                 // splitting attribute can take on.
+                bool foundChild = false;
                 foreach (var child in currentNode.children)
                 {
                     if (child.value.Equals(example.attributes[currentNode.attribute]))
                     {
+                        foundChild = true;
                         currentNode = child;
                         break;
                     }
+                }
+
+                if (!foundChild)
+                {
+                    Random r = new Random();
+                    currentNode = currentNode.children[r.Next(currentNode.children.Count)];
                 }
             }
 

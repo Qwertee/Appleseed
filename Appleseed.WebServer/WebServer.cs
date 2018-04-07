@@ -49,8 +49,8 @@ namespace Appleseed.WebServer
 
             var test = new Example("");
             test.AddAttribute("month", 1);
-            test.AddAttribute("day", 1);
-            test.AddAttribute("dayOfWeek", 4);
+            test.AddAttribute("day", 2);
+            test.AddAttribute("dayOfWeek", 5);
             test.AddAttribute("airline", "NK");
             test.AddAttribute("airport", "MSP");
 
