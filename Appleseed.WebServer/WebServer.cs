@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using System.Threading;
 using Appleseed.DecisionTree;
 using MySql.Data.MySqlClient;
@@ -102,7 +103,7 @@ namespace Appleseed.WebServer
             }
             
         }
-
+        
         private static DecisionTree.DecisionTree CreateTree(string connStr, int limit)
         {
             MySqlConnection connection;
@@ -112,11 +113,56 @@ namespace Appleseed.WebServer
                 connection = new MySqlConnection(connStr);
                 connection.Open();
 
-                var cmd = new MySqlCommand();
+                MySqlCommand cmd;
+                MySqlDataReader reader;
+                String listStr = null;
+
+                int maxId = -1;
+                {
+                    cmd = new MySqlCommand();
+                    cmd.Connection = connection;
+                    cmd.CommandText = "SELECT MAX(id) FROM flights";
+                    cmd.CommandTimeout = int.MaxValue;
+                    cmd.Prepare();
+
+                    reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        maxId = reader.GetInt32(0);
+                    }
+                    
+                    reader.Close();
+                }
+                
+
+                if (limit > -1)
+                {
+                    Random rand = new Random();
+                    var listStrBuilder = new StringBuilder("(");
+                    
+                    Console.WriteLine("Creating list string...");
+                    for (int i = 0; i < limit; i++)
+                    {
+                        int id = rand.Next(maxId) + 1;
+                        listStrBuilder.Append(id);
+                        if (i != limit - 1)
+                            listStrBuilder.Append(",");
+                    }
+
+                    listStrBuilder.Append(")");
+                    listStr = listStrBuilder.ToString();
+                }
+                
+                Console.WriteLine("Querying flights...");
+
+                cmd = new MySqlCommand();
                 cmd.Connection = connection;
                 cmd.CommandText = "SELECT * FROM flights";
-                if (limit >= 0)
-                    cmd.CommandText += " LIMIT " + limit;
+                if (listStr != null)
+                {
+                    cmd.CommandText += " WHERE ID in " + listStr;
+                }
                 cmd.CommandTimeout = int.MaxValue;
                 cmd.Prepare();
 
@@ -126,10 +172,9 @@ namespace Appleseed.WebServer
 
                 List<Example> trainingSet = new List<Example>();
 
-
                 Console.WriteLine("Retrieving data set...");
 
-                var reader = cmd.ExecuteReader();
+                reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
                     var delay = reader.GetInt32("DEPARTURE_DELAY");
@@ -158,6 +203,23 @@ namespace Appleseed.WebServer
 
                     trainingSet.Add(example);
                 }
+
+//
+//                Console.WriteLine("Selecting " + limit + " random entries from data set...");
+//                Random rand = new Random();
+//
+//                var filteredSet = new List<Example>();
+//
+//                while (filteredSet.Count < limit)
+//                {
+//                    int index = rand.Next(trainingSet.Count);
+//                    filteredSet.Add(trainingSet[index]);
+//                    trainingSet.RemoveAt(index);
+//                }
+//                
+//                // discard the data
+//                trainingSet.Clear();
+                
 
                 Console.WriteLine("Building decision tree...");
                 
