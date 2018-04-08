@@ -37,6 +37,7 @@ namespace Appleseed.WebServer
             {
                 Console.Write("Password: ");
                 string password = "";
+                int keyCounter = 0;
 
                 ConsoleKeyInfo key;
                 do
@@ -50,6 +51,13 @@ namespace Appleseed.WebServer
                         // password.AppendChar(key.KeyChar);
                         password = password + key.KeyChar;
                         Console.Write("*");
+                        keyCounter++;
+                    }
+                    if (key.Key == ConsoleKey.Backspace && keyCounter > 0)
+                    {
+                        Console.Write("\b \b");
+                        password = password.Remove(password.Length - 1, 1);
+                        keyCounter--;
                     }
                     // Exit if Enter key is pressed.
                 } while (key.Key != ConsoleKey.Enter);
